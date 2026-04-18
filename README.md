@@ -12,7 +12,7 @@ No database — uses in-memory ConcurrentHashMap for data storage.
 
 ### Steps
 1. Clone the repository:
-   git clone https://github.com/YOUR_USERNAME/smart-campus-api.git
+   git clone https://github.com/Anjana-1234/smart-campus-api.git
 
 2. Open in NetBeans → right-click project → Clean and Build
 
