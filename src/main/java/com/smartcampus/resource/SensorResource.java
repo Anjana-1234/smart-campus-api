@@ -38,29 +38,18 @@ public class SensorResource {
     // POST /sensors — register a new sensor
     @POST
     public Response createSensor(Sensor sensor) {
-        // Validate roomId exists — Part 3.1 integrity check
         if (sensor.getRoomId() == null
                 || !DataStore.rooms.containsKey(sensor.getRoomId())) {
-            return Response.status(422)
-                    .entity(Map.of(
-                        "error", "Unprocessable Entity",
-                        "message", "Room with ID '"
-                            + sensor.getRoomId()
-                            + "' does not exist."
-                    ))
-                    .build();
+            throw new com.smartcampus.exception.LinkedResourceNotFoundException(
+                "Room with ID '" + sensor.getRoomId() + "' does not exist."
+            );
         }
         DataStore.sensors.put(sensor.getId(), sensor);
-
-        // Add sensor ID to the room's sensor list
         DataStore.rooms.get(sensor.getRoomId())
-                .getSensorIds().add(sensor.getId());
-
-        // Create empty readings list for this sensor
+            .getSensorIds().add(sensor.getId());
         DataStore.readings.put(sensor.getId(), new ArrayList<>());
-
         return Response.status(201).entity(sensor).build();
-    }
+}
 
     // GET /sensors/{id} — get one sensor
     @GET

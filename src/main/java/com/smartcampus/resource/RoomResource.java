@@ -71,21 +71,18 @@ public class RoomResource {
         Room room = DataStore.rooms.get(id);
         if (room == null) {
             return Response.status(404)
-                    .entity(Map.of("error", "Room not found"))
-                    .build();
+                .entity(Map.of("error", "Room not found"))
+                .build();
         }
-        // Cannot delete if sensors are still assigned — Part 2.2
+        // Throw exception — caught by RoomNotEmptyExceptionMapper → 409
         if (!room.getSensorIds().isEmpty()) {
-            return Response.status(409)
-                    .entity(Map.of(
-                        "error", "Conflict",
-                        "message", "Cannot delete room. It still has "
-                            + room.getSensorIds().size()
-                            + " active sensor(s). Remove sensors first."
-                    ))
-                    .build();
+            throw new com.smartcampus.exception.RoomNotEmptyException(
+                "Cannot delete room '" + id + "'. It still has "
+                + room.getSensorIds().size()
+                + " active sensor(s). Remove sensors first."
+            );
         }
         DataStore.rooms.remove(id);
-        return Response.noContent().build(); // 204
-    }
+        return Response.noContent().build();
+}
 }
