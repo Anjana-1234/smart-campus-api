@@ -1,7 +1,7 @@
 # Smart Campus Sensor & Room Management API
 
 A RESTful API built with Java JAX-RS (Jersey) and Grizzly HTTP server.
-No database — uses in-memory ConcurrentHashMap for data storage.
+No database - uses in-memory ConcurrentHashMap for data storage.
 
 ## How to Build and Run
 
@@ -88,7 +88,7 @@ curl -X DELETE http://localhost:8080/api/v1/rooms/R1
 
 ## Report Q&A Answers
 
-### Q1 — JAX-RS lifecycle and thread safety (Part 1.1)
+### Q1 - JAX-RS lifecycle and thread safety (Part 1.1)
 JAX-RS creates a new resource class instance for every HTTP request
 by default (request-scoped). This means instance variables are not
 shared between requests, but static fields are. To safely share
@@ -97,37 +97,37 @@ provides thread-safe read and write operations without explicit
 synchronization. This prevents race conditions when multiple clients
 hit the API simultaneously.
 
-### Q2 — HATEOAS justification (Part 1.2)
+### Q2 - HATEOAS justification (Part 1.2)
 The discovery endpoint implements HATEOAS (Hypermedia as the Engine
 of Application State) by embedding resource links directly in the
-response. This makes the API self-documenting — clients can discover
+response. This makes the API self-documenting - clients can discover
 available endpoints without reading external documentation. It also
 reduces coupling between client and server because if a URL changes,
 the client follows the updated link rather than hardcoding paths.
 
-### Q3 — ID-only vs full object in list responses (Part 2.1)
+### Q3 - ID-only vs full object in list responses (Part 2.1)
 Returning only IDs minimises payload size and bandwidth consumption,
-but forces clients to make N additional requests to fetch details —
+but forces clients to make N additional requests to fetch details -
 known as the N+1 problem. Returning full objects increases payload
 but allows immediate rendering. For this API, full objects are
 returned in list responses since the dataset is small and the
 client benefits from having all data in one request.
 
-### Q4 — Idempotency of DELETE (Part 2.2)
+### Q4 - Idempotency of DELETE (Part 2.2)
 DELETE is idempotent. The first call removes the room and returns
 204 No Content. Subsequent identical calls return 404 Not Found
 because the resource no longer exists. The server state is
-identical after both calls — no room with that ID exists — so the
+identical after both calls - no room with that ID exists - so the
 outcome is idempotent even though the HTTP status code differs.
 
-### Q5 — @Consumes mismatch and 415 (Part 3.1)
+### Q5 - @Consumes mismatch and 415 (Part 3.1)
 If a client sends Content-Type: text/plain to an endpoint annotated
 with @Consumes(MediaType.APPLICATION_JSON), JAX-RS automatically
 returns 415 Unsupported Media Type before the method code executes.
 The framework enforces the media type contract, so no manual
 checking is needed inside the method.
 
-### Q6 — QueryParam vs PathParam for filtering (Part 3.2)
+### Q6 - QueryParam vs PathParam for filtering (Part 3.2)
 Query parameters are semantically correct for filtering, searching,
 and optional refinement of a collection. Path parameters identify
 a specific unique resource. /sensors?type=CO2 correctly means
@@ -136,7 +136,7 @@ a specific unique resource. /sensors?type=CO2 correctly means
 with its own identity. Query parameters also compose easily:
 ?type=CO2&status=ACTIVE filters by multiple criteria simultaneously.
 
-### Q7 — Sub-resource locator pattern (Part 4.1)
+### Q7 - Sub-resource locator pattern (Part 4.1)
 Delegating nested paths to a separate SensorReadingResource class
 keeps each class focused on a single responsibility. The main
 SensorResource handles sensor-level concerns only, while
@@ -145,7 +145,7 @@ APIs with many nested routes, this prevents a single monolithic
 controller that becomes unmaintainable. It also makes unit testing
 easier since each class can be tested independently.
 
-### Q8 — 422 vs 404 for bad roomId (Part 5.1)
+### Q8 - 422 vs 404 for bad roomId (Part 5.1)
 404 Not Found means the requested URL does not exist. Here the URL
 /api/v1/sensors is perfectly valid. The problem is that the roomId
 value inside the JSON body references a non-existent entity. 422
@@ -154,7 +154,7 @@ syntactically correct JSON but semantically invalid due to a broken
 reference. This gives the client far more actionable information
 than a generic 404.
 
-### Q9 — Stack trace security risk (Part 5.2)
+### Q9 - Stack trace security risk (Part 5.2)
 Exposing Java stack traces reveals internal package names, class
 names, library versions, and line numbers. An attacker can use
 this to identify known CVEs in specific library versions, understand
